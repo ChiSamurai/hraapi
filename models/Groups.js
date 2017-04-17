@@ -21,6 +21,7 @@ GroupSchema.statics.getUserGroups = function(req, res, next) {
             {"members.type": "user" }
         ]
     };
+    //ToDo: get LDAP Groups if connected to LDAP
     var _next = next;
     this.find(query ,{"_id": 0, "id": 1, "members.id.$": 1}, function(err, post) {
         if (err) return next(err);

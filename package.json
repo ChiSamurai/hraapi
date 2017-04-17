@@ -8,10 +8,12 @@
   },
   "private": true,
   "scripts": {
+    "watch": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "dependencies": {
     "async": "^2.1.4",
+    "bcrypt": "^1.0.2",
     "body-parser": "~1.15.2",
     "bootstrap": "^3.3.7",
     "cookie-parser": "^1.4.3",
@@ -40,13 +42,14 @@
     "serve-favicon": "~2.3.0",
     "svg-boundings": "^1.2.0",
     "svg-path-parser": "^1.0.1",
+    "uuid": "^3.0.1",
     "walk-sync": "^0.3.1",
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
     "ejs-lint": "^0.2.0",
-    "grunt": "^1.0.1",
     "grunt-apidoc": "^0.11.0",
-    "grunt-contrib-copy": "^1.0.0"
+    "grunt-contrib-copy": "^1.0.0",
+    "nodemon": "^1.11.0"
   }
 }

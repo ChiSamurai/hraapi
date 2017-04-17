@@ -10,7 +10,7 @@ var Users = require('../models/Users.js');
 var token = require('../token');
 var Tools = require('../tools');
 var http = require('http');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 
 var probe = require('probe-image-size');
 var async = require('async');
@@ -18,7 +18,7 @@ var sizeOf = require('image-size');
 
 
 /*var util = require('util');
-*/
+*/ 
 var bodyParser = require('body-parser');
 
 var jsonParser = bodyParser.json();

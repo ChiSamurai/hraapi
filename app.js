@@ -18,6 +18,7 @@ var LdapStrategy = require('passport-ldapauth');
 var passport = require('passport');
 
 
+var install = require('./routes/install');
 var admin = require('./routes/admin');
 var annotations = require('./routes/annotations');
 var users = require('./routes/users');
@@ -66,6 +67,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', index);
+app.use('/install', install);
 app.use('/admin', admin);
 app.use('/annotations', annotations);
 app.use('/users', users);

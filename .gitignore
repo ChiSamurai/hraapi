@@ -39,6 +39,13 @@ jspm_packages
 #config file
 config.js
 
+#joe backup files
+*.*~
+
+#local certs
+/*.pem
+/*.crt
+
 build/
 
 public/javascripts/bootstrap.*

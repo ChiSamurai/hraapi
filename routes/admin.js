@@ -79,6 +79,48 @@ adminRouter.get('/entityPermissions/:entityId/:format?', Token.check, Users.chec
 	});
 });
 
+/*adminRouter.post('/users/add', Token.check, Users.checkAdmin, function(req, res, nect) {*/
+adminRouter.post('/users/add', function(req, res, next) {
+//add a new user
+  try{
+  	var testuser = new Users(req.body);
+  	console.log(testuser);
+	testuser.save(function(err) {
+    	if (err) throw err;
+    });
+    res.status(200);
+    res.json(req.body);
+
+    /*Permissions.getUserPermissionsForId(req, canvasId, function(err, permissions) {
+      if(typeof(permissions.create) !== "undefined"  && permissions.create === true){
+        var anno = {
+            createdBy: req.userMetadata.userId,
+            oaAnnotation: req.body
+          };
+        var annoId = Tools.fullUrl(req) + "/" + uuid();
+        anno.oaAnnotation["@id"] = annoId;
+        //Create the annotation
+        Annotations.create(anno, function (err, post) {
+          var storedAnno = post;
+          if (err) next(err);
+          //create permissions with full access for creating user and admin group
+          Permissions.createEntityPermissions(req, annoId, "oa:Annotation", function(err, post) {
+            if (err) return next(err);
+            res.status(200);
+            res.send(storedAnno.oaAnnotation);
+          });  
+        });
+      }else{
+        res.status(403);
+        res.json("You don't have permissions to CREATE annotations to this entity");
+      }
+    });*/
+  }catch (err){
+    next(err);
+  }
+});
+
+
 /*adminRouter.post('/importFSDir', Token.check, Users.checkAdmin, urlencodedParser, function(req, res, next) {
 	
 

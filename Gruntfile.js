@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-      copy: {
+    copy: {
         main: {
           files: [
             {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/css/bootstrap.*'], dest: 'public/stylesheets/', filter: 'isFile'},
@@ -13,8 +13,8 @@ module.exports = function(grunt) {
             {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.scrollstop.js'], dest: 'public/javascripts/', filter: 'isFile'},
           ]
         }
-      }
-    });
+    }
+  });
 
     grunt.loadNpmTasks('grunt-contrib-copy');
 

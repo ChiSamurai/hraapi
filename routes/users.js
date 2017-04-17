@@ -133,6 +133,7 @@ usersRouter.post('/admin/setUserPermissions', token.check, Users.checkAdmin, url
   });
 });
 
+
 /*usersRouter.post('/searchUser', token.check, Users.checkadmin, function(req, res, next) {
   if (err) return next(err);
   var ldapOptions = {
