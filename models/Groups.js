@@ -1,9 +1,18 @@
 var mongoose = require('mongoose');
+var uuid = require('uuid/v4');
 
 var GroupSchema = new mongoose.Schema({
-    "id" : {type:String, required:true, unique:true, dropDups: true},
+    "groupId" : {type:String, required:true, unique:true, dropDups: true, default:uuid},
+    "source": {type:String, required:true, unique:false, default: "local"}, //local or ldap? (or anything else in the future)
+    "groupname": {type: String, required: true, unique: true, dropDups: true},
     "creator" : {type:String, required:true}, 
     "members" : [
+        {
+            "id": { type:String, unique:true},
+            "type": { type:String, enum: ["user", "group"]}
+        }
+    ],
+    "managers":[
         {
             "id": { type:String, unique:true},
             "type": { type:String, enum: ["user", "group"]}
@@ -31,6 +40,17 @@ GroupSchema.statics.getUserGroups = function(req, res, next) {
             });
         });
         next(null, req, res);
+    });
+};
+
+GroupSchema.methods.addUserGroup = function(req, res, next){
+
+};
+
+GroupSchema.statics.getGroups = function(groupnames, next) {
+    this.find({"groupname": { $in: groupnames}}, {'_id':0}, function (err, foundGroups){
+        if(err) next(err);
+        next(null, foundGroups);
     });
 };
 

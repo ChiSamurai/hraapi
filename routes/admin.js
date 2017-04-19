@@ -3,7 +3,9 @@ var ejs = require('ejs');
 var adminRouter = express.Router();
 var Token = require('../token');
 var Manifests = require('../models/Manifests.js');
+
 var Users = require('../models/Users.js');
+var Groups = require('../models/Groups.js');
 var Permissions = require('../models/Permissions.js');
 
 var bodyParser = require('body-parser');
@@ -81,15 +83,16 @@ adminRouter.get('/entityPermissions/:entityId/:format?', Token.check, Users.chec
 
 /*adminRouter.post('/users/add', Token.check, Users.checkAdmin, function(req, res, nect) {*/
 adminRouter.post('/users/add', function(req, res, next) {
-//add a new user
-  try{
-  	var testuser = new Users(req.body);
-  	console.log(testuser);
-	testuser.save(function(err) {
-    	if (err) throw err;
-    });
-    res.status(200);
-    res.json(req.body);
+	//add a new user
+  	var newUser = new Users(req.body);
+/*  	console.log(testuser);*/
+	newUser.save(function(err) {
+    	if (err){
+			res.status(500);
+		    return res.json(err);
+	   }
+	});
+    
 
     /*Permissions.getUserPermissionsForId(req, canvasId, function(err, permissions) {
       if(typeof(permissions.create) !== "undefined"  && permissions.create === true){
@@ -115,14 +118,21 @@ adminRouter.post('/users/add', function(req, res, next) {
         res.json("You don't have permissions to CREATE annotations to this entity");
       }
     });*/
-  }catch (err){
-    next(err);
-  }
 });
 
+adminRouter.post('/groups/add', function(req, res, next) {
+	//add a new group
+  	var newGroup = new Groups(req.body);
+  	console.log(newGroup);
+	newGroup.save(function(err) {
+    	if (err){
+			res.status(500);
+		    return res.json(err);
+	   }
+	});
+});
 
 /*adminRouter.post('/importFSDir', Token.check, Users.checkAdmin, urlencodedParser, function(req, res, next) {
-	
 
 });
 */

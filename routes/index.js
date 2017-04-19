@@ -1,17 +1,27 @@
 var express = require('express');
 var router = express.Router();
 var Token = require('../token');
+var Users = require('../models/Users.js');
+var Groups = require('../models/Groups.js');
 
 /* GET home page. */
-router.get('/', Token.check, function(req, res, next) {
-/*	console.log(req.userMetadata)*/
-	var renderObject = {
-		title: "HRA IIIF API Frontend",
-		userMetadata: req.userMetadata,
-/*		admin: req.userMetadata.admin*/
-		admin: true
-	};
-	res.render('pages/index', renderObject);
+// Check for existing admin and show install page if not found
+router.get('/', Users.getAdminUsers, Token.check, function(req, res, next) {
+	
+	if (res.adminUsers.length === 0){
+		res.send("NO ADMIN USERS");
+
+		//no Admin users found, so show install options
+	}else{
+		var renderObject = {
+			title: "HRA IIIF API Frontend",
+			userMetadata: req.userMetadata,
+	//		admin: req.userMetadata.admin
+			admin: true
+		};
+
+		res.render('pages/index', renderObject);
+	}
 });
 
 module.exports = router;
