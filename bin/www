@@ -4,11 +4,11 @@
  * Module dependencies.
  */
 
-var app = require('../src/app');
+var app = require('../app');
 var debug = require('debug')('hraapi:server');
 var http = require('http');
 var https = require('https');
-var config = require('../src/config'); // get the config file
+var config = require('../config'); // get the config file
 
 /**
  * Get port from environment and store in Express.

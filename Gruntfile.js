@@ -3,35 +3,41 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     express: {
       options: {
-        background: false
+        spawn: false
       },
-      dev: {
+      dev:{
         options: {
-          script: 'bin/www'
+          script: 'dist/bin/www'
         }
       }
     },
     copy: {
       main: {
         files: [
-          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/css/bootstrap.*'], dest: 'src/public/stylesheets/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/fonts/*'], dest: 'src/public/fonts/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/js/bootstrap.js'], dest: 'src/public/javascripts/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery.cookie/jquery.cookie.js'], dest: 'src/public/javascripts/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery/dist/jquery.min.js'], dest: 'src/public/javascripts/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.lazyload.js'], dest: 'src/public/javascripts/dist/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.scrollstop.js'], dest: 'src/public/javascripts/dist/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/css/bootstrap.*'], dest: 'dist/public/stylesheets/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/fonts/*'], dest: 'dist/public/fonts/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/js/bootstrap.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/jquery.cookie/jquery.cookie.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/jquery/dist/jquery.min.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.lazyload.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
+          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.scrollstop.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
+          {expand: true, src: ['bin/**'], dest: 'dist/'},
+          {expand: true, cwd: 'src', src: ['**'], dest: 'dist/'},
         ]
       }
     },
     watch: {
-      all:{
+      express:{
+        options: {
+          spawn: false,
+        },
         files: [
+          'src/**/*.css',
           'src/**/*.ejs',
           'src/**/*.js',
-          '!src/public/javascripts/dist/yy**/*.js'
+          '!src/public/javascripts/dist/**/*.js'
         ],
-        tasks: ['copy:main']
+        tasks: ['copy', 'express:dev']
       }
     }
   });
@@ -40,7 +46,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-express-server');
 
-    grunt.registerTask('default', ['express', 'watch']);
-    grunt.registerTask('copy',['copy:main']);
+/*    grunt.registerTask('default', ['express', 'watch']);*/
+    grunt.registerTask('default', ['express:dev', 'watch']);
+//    grunt.registerTask('dev', ['copy', 'express', 'watch']);
+
+/*    grunt.registerTask('copy', 'copy');*/
 /*    grunt.registerTask('watch', 'watch');*/
 };

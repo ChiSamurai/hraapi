@@ -46,7 +46,7 @@ config.js
 /*.pem
 /*.crt
 
-build/
+dist/
 
 public/javascripts/bootstrap.*
 public/stylesheets/bootstrap.*

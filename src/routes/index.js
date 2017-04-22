@@ -9,9 +9,8 @@ var Groups = require('../models/Groups.js');
 router.get('/', Users.getAdminUsers, Token.check, function(req, res, next) {
 	
 	if (res.adminUsers.length === 0){
-		res.send("NO ADMIN USERS");
-
 		//no Admin users found, so show install options
+		res.render('pages/install/index', renderObject);
 	}else{
 		var renderObject = {
 			title: "HRA IIIF API Frontend",

@@ -43,10 +43,6 @@ GroupSchema.statics.getUserGroups = function(req, res, next) {
     });
 };
 
-GroupSchema.methods.addUserGroup = function(req, res, next){
-
-};
-
 GroupSchema.statics.getGroups = function(groupnames, next) {
     this.find({"groupname": { $in: groupnames}}, {'_id':0}, function (err, foundGroups){
         if(err) next(err);
