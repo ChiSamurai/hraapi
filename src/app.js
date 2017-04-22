@@ -1,3 +1,11 @@
+/**
+* @file The main file
+* @email: samurai@gono.info
+* @Author: Matthias Guth
+* @Date:   2017-04-22 16:00:59
+* @Last Modified by:   Matthias Guth
+* @Last Modified time: 2017-04-22 19:34:42
+*/
 // load mongoose package
 var mongoose = require('mongoose');
 var express = require('express');
@@ -24,6 +32,7 @@ var annotations = require('./routes/annotations');
 var users = require('./routes/users');
 var manifests = require('./routes/manifests');
 var tests = require('./routes/tests');
+var doc = require('./routes/doc');
 
 
 // connect to MongoDB
@@ -66,13 +75,17 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+
 app.use('/install', install);
 app.use('/admin', admin);
 app.use('/annotations', annotations);
 app.use('/users', users);
 app.use('/manifests', manifests);
 app.use('/tests', tests);
+app.use('/doc', doc);
 app.use('*', index);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -83,7 +96,6 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  console.log(err);
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -93,5 +105,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+console.log("running in '" + process.env.NODE_ENV + "' mode");
 
 module.exports = app;

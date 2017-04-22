@@ -28,7 +28,6 @@ if(config.https.enable){
     cert: config.https.options.cert,
     passphrase: config.https.options.passphrase
   }, app).listen(config.https.options.port);
-  console.log("test");
 }
 
 

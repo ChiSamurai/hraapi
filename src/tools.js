@@ -1,3 +1,11 @@
+/**
+ * @fileOverview general Tools 
+ * @email: samurai@gono.info
+ * @Author: Matthias Guth
+ * @Date:   2017-04-20 21:27:31
+ * @Last Modified by:   Matthias Guth
+ * @Last Modified time: 2017-04-22 21:05:32
+ */
 var fs = require('graceful-fs');
 var url = require('url');
 var config = require('./config'); // get our config file
@@ -7,7 +15,17 @@ var http = require('http');
 var walkSync = require('walk-sync');
 var async = require('async');
 
+/**
+ * generally used tools
+ * @type {Object}
+ */
 var Tools = {
+	/**
+	 * gets the complete calling URL from req
+
+	 * @param  {Object} req the req object
+	 * @return {string}     the complete URL
+	 */
 	fullUrl: function(req) {
 	  return url.format({
 	    protocol: req.protocol,
@@ -40,6 +58,8 @@ var Tools = {
 		return results
 	},
 */
+
+
 	getImages: function(req, res, next){
 		req.images = walkSync(req.body.directory, { globs: ['**/*.tif'] });
 		var result = [];
@@ -59,6 +79,7 @@ var Tools = {
 		
 	},
 
+	
 	fetchUrlContent: function(url, callback) {
 		var bodyarr = [];
 		http.get(url, function(res) {

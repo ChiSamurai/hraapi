@@ -7,9 +7,20 @@ module.exports = function(grunt) {
       },
       dev:{
         options: {
+          node_env: 'development',
+          debug: true,
+          breakOnFirstLine: true,
           script: 'dist/bin/www'
         }
       }
+    },
+    jsdoc : {
+        dist : {
+            src: ['src/**/*.js'],
+            options: {
+                destination: 'dist/doc'
+            }
+        }
     },
     copy: {
       main: {
@@ -37,7 +48,7 @@ module.exports = function(grunt) {
           'src/**/*.js',
           '!src/public/javascripts/dist/**/*.js'
         ],
-        tasks: ['copy', 'express:dev']
+        tasks: ['copy', 'jsdoc', 'express:dev']
       }
     }
   });
@@ -46,9 +57,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-express-server');
 
+    grunt.loadNpmTasks('grunt-jsdoc');
+
 /*    grunt.registerTask('default', ['express', 'watch']);*/
     grunt.registerTask('default', ['express:dev', 'watch']);
-//    grunt.registerTask('dev', ['copy', 'express', 'watch']);
+/*    grunt.registerTask('debugger', ['copy', 'express', 'watch']); */
 
 /*    grunt.registerTask('copy', 'copy');*/
 /*    grunt.registerTask('watch', 'watch');*/

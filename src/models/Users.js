@@ -4,8 +4,13 @@ var SALT_WORK_FACTOR = 10;
 var uuid = require('uuid/v4');
 var Groups = require('../models/Groups.js');
 var jsonQuery = require('json-query');
-
-var UserSchema = new mongoose.Schema({
+var Schema = mongoose.Schema;
+/**
+ * Mongoose Schema for Users
+ *
+ * @module UserSchema
+ */
+var UserSchema = new Schema({
 	"userId": {type:String, required:true, unique:true, dropDups: true, default: uuid},
   "source": {type:String, required:true, unique:false, default: "local"}, //local or ldap? (or anything else in the future)
   "username": {type:String, required:true, unique: true},
@@ -39,6 +44,13 @@ UserSchema.pre('save', function(next) {
     });
 });
 
+
+/**
+ * Compare the submitted password with the encrypted representation stored in DB
+ *
+ * @memberof module:UserSchema
+ * @param  {string}   candidatePassword the password to check
+ */
 UserSchema.methods.comparePassword = function(candidatePassword, next) {
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
       if (err) return next(err);
@@ -46,12 +58,27 @@ UserSchema.methods.comparePassword = function(candidatePassword, next) {
   });
 };
 
+/**
+ * Check if authenticated user is admin
+ *
+ * @memberof module:UserSchema
+ *
+ */
 UserSchema.statics.checkAdmin = function(req, res, next) {
   if(req.userMetadata.admin) return next();
   res.status(403);
   res.send("admins only!");
 };
 
+/**
+ * get user Objects by usernames
+ *
+ * @memberof module:UserSchema
+ * @param  {Array}   usernames  the usernames to search, eg ['admin', 'someStandardUser']
+ * @param  {bool}    onlyActive if false also inactive users will get returned
+ *
+ * @return {Array}              Array with found user objects
+ */
 UserSchema.statics.getUsers = function(usernames, onlyActive, next) {
 /*    var thisGroup = this;*/
   var query = null;
