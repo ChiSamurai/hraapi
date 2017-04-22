@@ -4,11 +4,11 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../src/app');
 var debug = require('debug')('hraapi:server');
 var http = require('http');
 var https = require('https');
-var config = require('../config'); // get the config file
+var config = require('../src/config'); // get the config file
 
 /**
  * Get port from environment and store in Express.
@@ -16,6 +16,7 @@ var config = require('../config'); // get the config file
 
 var serverHttp = null,
   serverHttps = null;
+
 
 if(config.http.enable){
   serverHttp = http.createServer(app).listen(config.http.options.port);
@@ -27,6 +28,7 @@ if(config.https.enable){
     cert: config.https.options.cert,
     passphrase: config.https.options.passphrase
   }, app).listen(config.https.options.port);
+  console.log("test");
 }
 
 

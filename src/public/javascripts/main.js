@@ -1,21 +1,4 @@
-<meta charset="UTF-8">
-<title>HRA Api Frontend <%= (typeof(subtitle)!=="undefined"?" - " + subtitle:"") %></title>
-
-<!-- CSS (load bootstrap from a CDN) -->
-
-
- <!-- 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  -->
-<link rel="stylesheet" href="/stylesheets/bootstrap.css">
-<script src="/javascripts/jquery.min.js"></script>
-<script src="/javascripts/bootstrap.js"></script>
-<script src="/javascripts/jquery.lazyload.js"></script>
-<script src="/javascripts/jquery.cookie.js"></script>
-<script>
-	$(document).ready(function() {
+$(document).ready(function() {
 		$("img.lazy").lazyload({
 		    skip_invisible : true,
 		    threshold : 200,
@@ -52,7 +35,7 @@
 			var username = $form.children("input.login-username").val();
 			var password = $form.children("input.login-password").val();
 			var settings = {
-				"url": "/users/authenticate",
+				"url": "/users/login",
 				"method": "POST",
 				"headers": {
 					"content-type": "application/x-www-form-urlencoded",
@@ -115,7 +98,3 @@
 		//For development: Show the first canvas of the first manifest
 		$('#accordion').children().first().children(".collapse").collapse("show").find(".display-canvas").first().collapse("show");
 	});
-</script>
-<style>
-    body    { padding-top:0px; }
-</style>

@@ -33,6 +33,13 @@ usersRouter.get('/logout', function(req, res) {
   res.send("logged out");
 });
 
+usersRouter.post('/login', function(req, res, next) {
+  console.log(req.user);
+  res.send("login");
+/*  Users.getUsers([req.])
+  res.redirect*/
+})
+
 usersRouter.post('/authenticate', passport.authenticate('ldapauth', {session: false}), function(req, res) {
   var userMetadata = {
     userId: req.user.sAMAccountName + config.ldapIdSuffix,
