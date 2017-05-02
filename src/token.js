@@ -7,14 +7,13 @@ module.exports = {
 			var token = req.signedCookies['x-access-token'];
 			jwt.verify(token, config.secret, function(err, decoded) {
 		    	if (err) return next(err);
-		    	/*console.log("%j", decoded);*/
 				req.userMetadata = decoded;
 				res.locals.userMetadata = req.userMetadata;
-	    		next();
+	    		return next();
 			});
 		}else{
 			req.userMetadata = {
-				userId: "guest",
+				username: "guest",
 			    fullName: "Guest User",
     			displayName: "Guest User",
     			email: "",

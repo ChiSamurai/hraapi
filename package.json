@@ -12,6 +12,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "array-differ": "^2.0.3",
     "async": "^2.1.4",
     "bcrypt": "^1.0.2",
     "body-parser": "~1.15.2",

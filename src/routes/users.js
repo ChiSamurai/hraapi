@@ -4,6 +4,8 @@ var usersRouter = express.Router();
 
 var mongoose = require('mongoose');
 var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('../config'); // get config file
 var token = require('../token');
@@ -17,7 +19,6 @@ var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
 
 function fullUrl(req) {
   return url.format({
@@ -34,15 +35,21 @@ usersRouter.get('/logout', function(req, res) {
 });
 
 usersRouter.post('/login', function(req, res, next) {
-  console.log(req.user);
-  res.send("login");
-/*  Users.getUsers([req.])
-  res.redirect*/
-})
+  //check if it's a non-local username
+  var usernameParsed = req.body.username.split("@");
+  //redirect route to different strategies
+  req.url = "/users/authenticate/local";
+  if(usernameParsed[2] != 'undefined'){
+    return passport.authenticate('local', {session:false})(req, res, next);
+  }else{
+    res.send("RemoteLogin");
+  }
+});
 
 usersRouter.post('/authenticate', passport.authenticate('ldapauth', {session: false}), function(req, res) {
+  //user Metadata (LDAP)
   var userMetadata = {
-    userId: req.user.sAMAccountName + config.ldapIdSuffix,
+    username: req.user.sAMAccountName + "@" + config.ldapIdSuffix,
     fullName: req.user.name,
     displayName: req.user.displayName,
     email: req.user.mail,
@@ -84,7 +91,7 @@ usersRouter.post('/authenticate', passport.authenticate('ldapauth', {session: fa
 });
 
 usersRouter.get('/checkLogin', token.check, function(req, res, next) {
-  if(typeof(req.userMetadata) !== "undefined" && req.userMetadata.userId !== "guest"){
+  if(typeof(req.userMetadata) !== "undefined" && req.userMetadata.username !== "guest"){
     res.json({
       "result": true,
       "message": "Welcome back, " + req.userMetadata.fullName
@@ -128,7 +135,7 @@ usersRouter.post('/admin/generateStandardPermissionsFor', token.check, Users.che
 });
 
 usersRouter.post('/admin/setUserPermissions', token.check, Users.checkAdmin, urlencodedParser, function(req, res, next) {
-  Permissions.setUserPermissions(req.body.entityId, req.body.userId, req.body.permissions, function (err, post) {
+  Permissions.setUserPermissions(req.body.entityId, req.body.username, req.body.permissions, function (err, post) {
     if (err) return next(err);
     //if false there is no permission entry for this entity yet
     if (post === false){

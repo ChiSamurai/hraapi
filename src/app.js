@@ -4,7 +4,7 @@
 * @Author: Matthias Guth
 * @Date:   2017-04-22 16:00:59
 * @Last Modified by:   Matthias Guth
-* @Last Modified time: 2017-04-22 19:34:42
+* @Last Modified time: 2017-04-30 16:44:16
 */
 // load mongoose package
 var mongoose = require('mongoose');
@@ -22,8 +22,9 @@ var util = require('util');
 
 var index = require('./routes/index');
 
-var LdapStrategy = require('passport-ldapauth');
 var passport = require('passport');
+var LdapStrategy = require('passport-ldapauth');
+var LocalStrategy = require('passport-local').Strategy;
 
 
 var install = require('./routes/install');
@@ -34,6 +35,8 @@ var manifests = require('./routes/manifests');
 var tests = require('./routes/tests');
 var doc = require('./routes/doc');
 
+var Users = require('./models/Users.js');
+
 
 // connect to MongoDB
 var connectString = 'mongodb://';
@@ -43,6 +46,18 @@ if (config.database.user){
 connectString += config.database.uri + ":" + config.database.port + "/" + config.database.database;
 mongoose.connect(connectString);
 passport.use(new LdapStrategy(config.ldapStrategyOpts));
+passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+  },
+  
+  /*Users.authLocal*/
+  function(username, password, next) {
+    console.log(username + " " + password);
+    return next(null, false, {message: 'Incorrect username.'});
+  }
+  
+));
 
 var app = express();
 

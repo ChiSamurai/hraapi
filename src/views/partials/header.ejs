@@ -22,7 +22,7 @@
                 <% } %>
                 <li><a href="/about">About</a></li>
             </ul>
-            <% if(userMetadata.userId !== "guest") { %>
+            <% if(userMetadata.username !== "guest") { %>
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <span><%= userMetadata.fullName %></span>

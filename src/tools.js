@@ -4,7 +4,7 @@
  * @Author: Matthias Guth
  * @Date:   2017-04-20 21:27:31
  * @Last Modified by:   Matthias Guth
- * @Last Modified time: 2017-04-22 21:05:32
+ * @Last Modified time: 2017-04-26 21:51:25
  */
 var fs = require('graceful-fs');
 var url = require('url');
@@ -14,6 +14,7 @@ var sizeOf = require('image-size');
 var http = require('http');
 var walkSync = require('walk-sync');
 var async = require('async');
+var mongoose = require('mongoose');
 
 /**
  * generally used tools

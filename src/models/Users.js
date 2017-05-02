@@ -11,7 +11,7 @@ var Schema = mongoose.Schema;
  * @module UserSchema
  */
 var UserSchema = new Schema({
-	"userId": {type:String, required:true, unique:true, dropDups: true, default: uuid},
+	/*"userId": {type:String, required:true, unique:true, dropDups: true, default: uuid},*/
   "source": {type:String, required:true, unique:false, default: "local"}, //local or ldap? (or anything else in the future)
   "username": {type:String, required:true, unique: true},
 	"forename": {type:String, required:false},
@@ -19,7 +19,6 @@ var UserSchema = new Schema({
   "password": { type: String, required: true }, //this is ignored if user.source is not "local"
 	"email": {type:String, required:true},
   "active": {type:Boolean, required:true, default: true}
-	/*"roles": {type: Array, required:false, default:[]}*/
   },{
     timestamps: true
   }
@@ -52,9 +51,11 @@ UserSchema.pre('save', function(next) {
  * @param  {string}   candidatePassword the password to check
  */
 UserSchema.methods.comparePassword = function(candidatePassword, next) {
+  console.log("comparePassword");
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+      console.log(isMatch);
       if (err) return next(err);
-      next(null, isMatch);
+      return next(null, isMatch);
   });
 };
 
@@ -80,40 +81,41 @@ UserSchema.statics.checkAdmin = function(req, res, next) {
  * @return {Array}              Array with found user objects
  */
 UserSchema.statics.getUsers = function(usernames, onlyActive, next) {
-/*    var thisGroup = this;*/
-  var query = null;
-  if (onlyActive){
-    query = {$and: [{"username": { $in: usernames}}, {"active": true}]}; 
-  }else{
-    query = {"username": { $in: usernames}}; 
-  }
-
-  mongoose.model("Users").find(query, {'_id':0, password: 0}, function (err, foundUsers){
+  var query = {"username": { $in: usernames}};
+  if (onlyActive)
+    query = {$and: [query, {"active": true}]}; 
+  
+  mongoose.model("Users").find(query, {password: 0}, function (err, foundUsers){
     if(err) return next(err);
     next(null, foundUsers);
   });
 };
 
-UserSchema.statics.getAdminUsers = function(req, res, next) {
-    // check if admin group exists
-  var groupnames = ["admins"];
-  Groups.getGroups(groupnames, function(err, foundGroups){
+
+UserSchema.statics.authLocal = function(username, password, next) {
+  mongoose.model("Users").findOne({ username: username }, function (err, user) {
     if (err) return next(err);
-
-    //Admin group not found
-    if (foundGroups.length === 0) {
-      res.adminUsers = [];
-      return next(req, res);
-    }
-    //Admin group exists, so get the members
-    adminUsers = jsonQuery('members.id', {data: foundGroups}).value;
-    UserSchema.statics.getUsers(adminUsers, false, function (err, existingAdminUsers){
+    if (!user) return next(null, false, {message: 'No username given'});
+    if (!password) return next(null, false, {message: 'Wrong username / password'});
+/*    user.comparePassword(password, function (UserObject) {
       if (err) return next(err);
-      res.adminUsers = existingAdminUsers;
-      next();
-    });
+      return next(null, user);
+    });*/
+    return next(null, user);
+  })
+};
+
+/*
+
+UserSchema.statics.getUsersById = function(userIds, onlyActive, next) {
+  var query = {"userId": { $in: userIds}};
+  if (onlyActive)
+    query = {$and: [query, {"active": true}]}; 
+  
+  mongoose.model("Users").find(query, {password: 0}, function (err, foundUsers){
+    if(err) return next(err);
+    next(null, foundUsers);
   });
-}
-
-
+};
+*/
 module.exports = mongoose.model('Users', UserSchema)

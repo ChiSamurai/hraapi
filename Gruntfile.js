@@ -38,7 +38,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      express:{
+      dist:{
         options: {
           spawn: false,
         },
@@ -48,8 +48,20 @@ module.exports = function(grunt) {
           'src/**/*.js',
           '!src/public/javascripts/dist/**/*.js'
         ],
-        tasks: ['copy', 'jsdoc', 'express:dev']
-      }
+        tasks: ['copy', 'express:dev']
+      },
+      docGen:{
+        options: {
+          spawn: false,
+        },
+        files: [
+          'src/**/*.css',
+          'src/**/*.ejs',
+          'src/**/*.js',
+          '!src/public/javascripts/dist/**/*.js'
+        ],
+        tasks: ['jsdoc', 'express:dev']
+      }      
     }
   });
 
@@ -59,10 +71,6 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-jsdoc');
 
-/*    grunt.registerTask('default', ['express', 'watch']);*/
-    grunt.registerTask('default', ['express:dev', 'watch']);
-/*    grunt.registerTask('debugger', ['copy', 'express', 'watch']); */
-
-/*    grunt.registerTask('copy', 'copy');*/
-/*    grunt.registerTask('watch', 'watch');*/
+    grunt.registerTask('default', ['copy', 'express:dev', 'watch:dist']);
+    grunt.registerTask('doc-gen', ['jsdoc', 'express:dev', 'watch:docGen']);
 };
