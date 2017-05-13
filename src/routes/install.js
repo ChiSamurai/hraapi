@@ -10,68 +10,67 @@ var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 
+installRouter.post('/doInstall/:step', Users.adminExists, function (req, res, next) {
+	/* Steps:
+		1: create adminGroup & User 
+	*/
+	console.log(req.params);
+	console.log(req.body);
+	switch(parseInt(req.params.step)){
+		case 1:
+			//Create an admin user (if it does not already exist)
+			if(!req.adminExists){
+				var userData = req.body;
+				userData.source = "local",
+				userData.active = true;
+				var adminUser = new Users(userData);
+				//Save user into MongoDB
+				adminUser.save(function(err) {
+					if(err) return next(err);
+					else{
+						//create the admin group
+						var adminGroupData = {
+							groupname: "admins",
+							source: "local",
+							creator: userData.username,
+							active: true,
+							members: [{
+								name: userData.username,
+								type: "user"
+							}],
+							managers:[
+								{
+									name: userData.username,
+									type: "user"
+								},
+								{
+									name: "admins",
+									type: "group"
+								}
+							]
+						};
+						var adminGroup = new Groups(adminGroupData);
+						//Save admin Group
+						adminGroup.save(function (err) {
+							if(err) return next(err);
+							else{
+								res.status(200);
+								res.send("admin user and group successfully created.");
+							}
+						});
+					}
+				});
+			}else{
+			    res.status(401);
+				res.send("admin user already exists.");
+			}
+			break;
+	}
+});
+
 installRouter.get('/', function(req, res, next) {
 	return next();
 });
 
-installRouter.post('/doInstall', function (req, res, next) {
-	var newAdminUser = new Users({
-		username: req.body.username
-	});
-
-/*	var adminGroup = new Groups();
-*/	//Search for the admin group
-
-	Groups.find({groupname: "admins"}, function (err, result){
-
-		Users.getAdminUsers(req, res, function(req, res, next) {
-			console.log(res.adminUsers);
-		});
-/*		//if adminGroup exists and has an active Member 
-		if (err) return next(err);
-		if(result.length > 0){
-			//admin group found, check the users
-			var getActiveAdminUsersQuery = {$and: [{"username": { $in: result[0].members}}, {"active": true}]}; 
-			Users.find(getActiveAdminUsersQuery, function (err, foundUsers) {
-				if (err) return next(err);
-				if(foundUsers.length > 0){
-					//there is an active admin
-					res.status(401);
-					res.send("Admin user exists. Installation already completed");
-				}else{
-					res.status(200);
-					var adminGroup = new Groups({
-						"source": "local",
-    					"groupname": "admins",
-    					"creator" : "SYSTEM",
-    					"members" : [
-        					{
- 					           "id": { type:String, unique:true},
-            					"type": { type:String, enum: ["user", "group"]}
-        					}
-    					],
-    					"managers":[
-        					{
-            					"id": { type:String, unique:true},
-            					"type": { type:String, enum: ["user", "group"]}
-        					}
-    					]
-					});
-					res.send("No admin user in Group -> Create Admin User");
-				}
-				
-			});
-		}else{
-			res.status(200);
-			//group not found. Create admin user and admin Group
-			//
-			res.send("No admin Group -> Create Admin User and Group");
-			
-
-		}
-*/
-		
-	});
-});
 
 module.exports = installRouter;

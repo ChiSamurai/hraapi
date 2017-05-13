@@ -9,26 +9,19 @@ var token = require('../token');
 
 /* GET home page. */
 // Check for existing admin and show install page if not found
-router.get('/', token.check, function(req, res, next) {
-	Groups.getGroupMembers(['admins'], true, function (err, foundUsers) {
-		if(err) return next(err);
-		if (foundUsers['admins'].length === 0){
-			//no Admin users found, so show install options
-			res.render('pages/install/index', renderObject);
-		}else{
-			console.log(req.userMetadata);
-
-			var renderObject = {
-				title: "HRA IIIF API Frontend",
-				userMetadata: req.userMetadata,
-				admin: req.userMetadata.admin
-			};
-			res.render('pages/index', renderObject);
-		}		
-	});
-
-
-
+router.get('/', Users.adminExists, token.check, function(req, res, next) {
+	if (req.adminExists){
+		console.log(req.userMetadata);
+		var renderObject = {
+			title: "HRA IIIF API Frontend",
+			userMetadata: req.userMetadata,
+			admin: req.userMetadata.admin
+		};
+		res.render('pages/index', renderObject);
+	}else{
+		//no Admin users found, so show install options
+		res.render('pages/install/index', renderObject);
+	}
 });
 
 module.exports = router;

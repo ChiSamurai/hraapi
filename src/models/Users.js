@@ -51,9 +51,7 @@ UserSchema.pre('save', function(next) {
  * @param  {string}   candidatePassword the password to check
  */
 UserSchema.methods.comparePassword = function(candidatePassword, next) {
-  console.log("comparePassword");
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-      console.log(isMatch);
       if (err) return next(err);
       return next(null, isMatch);
   });
@@ -61,15 +59,32 @@ UserSchema.methods.comparePassword = function(candidatePassword, next) {
 
 /**
  * Check if authenticated user is admin
+ * adds {bool} parameter req.userMetadata.admin
  *
  * @memberof module:UserSchema
  *
  */
 UserSchema.statics.checkAdmin = function(req, res, next) {
-  if(req.userMetadata.admin) return next();
+  if(req.userMetadata && req.userMetadata.admin) return next();
   res.status(403);
   res.send("admins only!");
 };
+
+/**
+ * MW: Check if an admin exists in system
+ * adds {bool} parameter req.adminExists
+ 
+ * @memberOf module:UserSchema
+ */
+
+UserSchema.statics.adminExists = function(req, res, next) {
+    Groups.getGroupMembers(['admins'], true, function (err, foundUsers) {
+        if(err) return next(err);
+        req.adminExists = (foundUsers['admins'] === undefined || foundUsers['admins'].length === 0)?false:true;
+        return next();
+    });
+};
+
 
 /**
  * get user Objects by usernames
@@ -92,19 +107,15 @@ UserSchema.statics.getUsers = function(usernames, onlyActive, next) {
 };
 
 
-UserSchema.statics.authLocal = function(username, password, next) {
+/*UserSchema.statics.authLocal = function(username, password, next) {
   mongoose.model("Users").findOne({ username: username }, function (err, user) {
     if (err) return next(err);
     if (!user) return next(null, false, {message: 'No username given'});
     if (!password) return next(null, false, {message: 'Wrong username / password'});
-/*    user.comparePassword(password, function (UserObject) {
-      if (err) return next(err);
-      return next(null, user);
-    });*/
     return next(null, user);
   })
 };
-
+*/
 /*
 
 UserSchema.statics.getUsersById = function(userIds, onlyActive, next) {

@@ -25,13 +25,7 @@ module.exports = function(grunt) {
     copy: {
       main: {
         files: [
-          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/css/bootstrap.*'], dest: 'dist/public/stylesheets/', filter: 'isFile'},
           {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/fonts/*'], dest: 'dist/public/fonts/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/bootstrap/dist/js/bootstrap.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery.cookie/jquery.cookie.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery/dist/jquery.min.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.lazyload.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
-          {expand: true, flatten: true, src: ['node_modules/jquery-lazyload/jquery.scrollstop.js'], dest: 'dist/public/javascripts/', filter: 'isFile'},
           {expand: true, src: ['bin/**'], dest: 'dist/'},
           {expand: true, cwd: 'src', src: ['**'], dest: 'dist/'},
         ]

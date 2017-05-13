@@ -4,7 +4,7 @@
 * @Author: Matthias Guth
 * @Date:   2017-04-22 16:00:59
 * @Last Modified by:   Matthias Guth
-* @Last Modified time: 2017-04-30 16:44:16
+* @Last Modified time: 2017-05-13 19:04:19
 */
 // load mongoose package
 var mongoose = require('mongoose');
@@ -29,8 +29,9 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var install = require('./routes/install');
 var admin = require('./routes/admin');
-var annotations = require('./routes/annotations');
 var users = require('./routes/users');
+var groups = require('./routes/groups');
+var annotations = require('./routes/annotations');
 var manifests = require('./routes/manifests');
 var tests = require('./routes/tests');
 var doc = require('./routes/doc');
@@ -53,11 +54,19 @@ passport.use(new LocalStrategy({
   
   /*Users.authLocal*/
   function(username, password, next) {
-    console.log(username + " " + password);
-    return next(null, false, {message: 'Incorrect username.'});
-  }
-  
-));
+    Users.findOne({username:username, active:true}, function (err, user) {
+      if(err) return next(err);
+      // Compare the submitted password with the one stored
+      user.comparePassword(password, function(err, matches) {
+        if(matches){
+          return next(null, user);
+        }else{
+          return next(null, false, {message: 'Incorrect username.'});
+        }
+      })
+    });
+  })
+);
 
 var app = express();
 
@@ -94,8 +103,9 @@ app.use(function(req, res, next) {
 
 app.use('/install', install);
 app.use('/admin', admin);
-app.use('/annotations', annotations);
 app.use('/users', users);
+app.use('/groups', groups);
+app.use('/annotations', annotations);
 app.use('/manifests', manifests);
 app.use('/tests', tests);
 app.use('/doc', doc);

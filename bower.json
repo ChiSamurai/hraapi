@@ -1,0 +1,25 @@
+{
+  "name": "hraapi",
+  "description": "HRA REST-API for MongoDB resources with LDAP auth/permissions and token auth",
+  "main": "",
+  "authors": [
+    "Matthias Guth <samurai@gono.info>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ChiSamurai/hraapi",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.2.1",
+    "jquery_lazyload": "jquery.lazyload#^1.9.7",
+    "jquery.cookie": "^1.4.1",
+    "bootstrap-validator": "^0.11.9"
+  }
+}

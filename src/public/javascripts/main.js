@@ -54,8 +54,8 @@ $(document).ready(function() {
 		});
 		$('.login-logout-send').on('click', function() {
 			var settings = {
-				"url": "/users/logout",
-				"method": "GET"
+				url: "/users/logout",
+				method: "GET"
 			};
 			$.ajax(settings).done(function (response) {
 				location.reload();
@@ -97,4 +97,24 @@ $(document).ready(function() {
 
 		//For development: Show the first canvas of the first manifest
 		$('#accordion').children().first().children(".collapse").collapse("show").find(".display-canvas").first().collapse("show");
+
+		/* install.ejs */
+		// intersect submission of createAdminUser form 
+		$('#installAdminUser > .newUserForm').validator().on('submit', function (e) {
+			if (e.isDefaultPrevented()) {
+				console.debug("invalid!");
+			} else {
+				e.preventDefault();
+			
+				var settings = {
+					url: "/install/doInstall/1",
+					method: "POST",
+					data: $(this).serialize()
+				};
+				$.ajax(settings).done(function (response) {
+					console.debug(response);
+					//$("#installAdminUser").find("input,button").hide();
+				});
+			}
+		});
 	});

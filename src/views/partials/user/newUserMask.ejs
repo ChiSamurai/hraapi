@@ -1,0 +1,34 @@
+<form data-toggle="validator" class="newUserForm" role="form">
+  <h2 class="text-center">User Data</h2>
+  <div class="form-group">
+    <label for="username" class="control-label">Username</label>
+    <input id="username" name="username" type="text" class="form-control" placeholder="username" required autofocus>
+  </div>
+  <div class="form-group">
+    <label for="forename" class="control-label">forename</label>
+    <input id="forename" name="forename" type="text" class="form-control" placeholder="forename" required autofocus>
+  </div>
+  <div class="form-group">
+    <label for="lastname" class="control-label">lastname</label>
+    <input id="lastname" name="lastname" type="text" class="form-control" placeholder="lastname" required autofocus>
+  </div>
+  <div class="form-group">
+    <label for="email" class="control-label">Email address</label>
+    <input id="email" name="email" type="email" class="form-control" placeholder="email@domain.tld" required autofocus>
+  </div>
+  <div class="form-group">
+    <label for="password" class="control-label">Password</label>
+    <input id="password" name="password" type="password" class="form-control" data-minlength="6" placeholder="Password" required>
+    <div class="help-block">Minimum of 8 characters</div>
+    <label for="passwordRepeat" class="control-label">Repeat password</label>
+    <input id="passwordRepeat" type="password" class="form-control" data-match="#password" placeholder="Password (repeat)" required>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-lg btn-primary btn-block button-send" type="submit">Create</button>
+  </div>
+  <div style="display:none;" class="alert alert-danger creating-failed" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+      Creating user failed.
+  </div>
+</form>

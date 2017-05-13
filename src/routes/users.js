@@ -29,6 +29,22 @@ function fullUrl(req) {
   });
 };
 
+function createToken(user){
+  console.log(user);
+    var token = jwt.sign(user, config.secret, {
+      expiresIn: "24h" // expires in 24 hours
+    });
+    // store cookie
+    let options = {
+        maxAge: 1000 * 60 * 60 * 24, // would expire after 24h
+/*        maxAge: 0, // would expire after 24h*/
+        httpOnly: true, // The cookie only accessible by the web server
+        signed: true // Indicates if the cookie should be signed
+    }
+    return token
+}
+
+
 usersRouter.get('/logout', function(req, res) {
   res.clearCookie('x-access-token');
   res.send("logged out");
@@ -38,9 +54,38 @@ usersRouter.post('/login', function(req, res, next) {
   //check if it's a non-local username
   var usernameParsed = req.body.username.split("@");
   //redirect route to different strategies
-  req.url = "/users/authenticate/local";
   if(usernameParsed[2] != 'undefined'){
-    return passport.authenticate('local', {session:false})(req, res, next);
+    req.url = "/users/authenticate/local";
+    /*return passport.authenticate('local', {session:false})(req, res, next);*/
+    return passport.authenticate('local', {session:false}, function(err, user, info) {
+      if (err) { return next(err); }
+      if (!user) {
+        res.status(403);
+        res.send("invalid username or password");
+        return;
+      }
+      res.status(200);
+      var token = createToken(user);
+      let options = {
+        maxAge: 1000 * 60 * 60 * 24, // would expire after 24h
+/*        maxAge: 0, // would expire after 24h*/
+        httpOnly: true, // The cookie only accessible by the web server
+        signed: true // Indicates if the cookie should be signed
+      };
+      res.cookie('x-access-token', token, options)
+      res.send({
+        token: token,
+        username: user.username,
+        forename: user.forename,
+        lastname: user.lastname,
+        email: user.email,
+        message: "Welcome back " + user.forename + " " + user.lastname
+      });
+/*    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect('/users/' + user.username);
+    });*/
+  })(req, res, next);
   }else{
     res.send("RemoteLogin");
   }

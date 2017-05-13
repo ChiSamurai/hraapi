@@ -9,8 +9,8 @@ const util = require('util')
 var async = require("async");
 
 var GroupMembersSchema = new mongoose.Schema({
-    "name": { type:String, unique:true},
-    "type": { type:String, enum: ["user", "group"]}
+    name: { type:String, unique:true},
+    type: { type:String, enum: ["user", "group"]}
 });
 
 var GroupSchema = new mongoose.Schema({
@@ -24,6 +24,18 @@ var GroupSchema = new mongoose.Schema({
     timestamps: true
   }
 );
+
+/*
+
+GroupSchema.methods.new = function(req, groupName, active = true, source = "local", next){
+    var newGroup = new Groups(groupData);
+    newGroup.save(function (err) {
+        if (err) return next(err);
+        else next(null, groupname);
+    });
+};
+*/
+
 GroupSchema.statics.getUserGroups = function(req, res, next) {
     var query = { 
         $and: [
