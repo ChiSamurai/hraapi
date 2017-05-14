@@ -30,19 +30,21 @@ function fullUrl(req) {
 };
 
 function createToken(user){
-  console.log(user);
-    var token = jwt.sign(user, config.secret, {
-      expiresIn: "24h" // expires in 24 hours
-    });
-    // store cookie
-    let options = {
-        maxAge: 1000 * 60 * 60 * 24, // would expire after 24h
+  var tokenData = {
+    username: user.username
+  };
+  var token = jwt.sign(tokenData, config.secret, {
+    expiresIn: "24h" // expires in 24 hours
+  });
+  // store cookie
+  let options = {
+      maxAge: 1000 * 60 * 60 * 24, // would expire after 24h
 /*        maxAge: 0, // would expire after 24h*/
-        httpOnly: true, // The cookie only accessible by the web server
-        signed: true // Indicates if the cookie should be signed
-    }
-    return token
-}
+      httpOnly: true, // The cookie only accessible by the web server
+      signed: true // Indicates if the cookie should be signed
+  }
+  return token;
+};
 
 
 usersRouter.get('/logout', function(req, res) {
@@ -87,6 +89,7 @@ usersRouter.post('/login', function(req, res, next) {
     });*/
   })(req, res, next);
   }else{
+    //ToDo: Implement other logins/authentication methods like LDAP
     res.send("RemoteLogin");
   }
 });
@@ -135,7 +138,7 @@ usersRouter.post('/authenticate', passport.authenticate('ldapauth', {session: fa
   });
 });
 
-usersRouter.get('/checkLogin', token.check, function(req, res, next) {
+usersRouter.get('/checkLogin', function(req, res, next) {
   if(typeof(req.userMetadata) !== "undefined" && req.userMetadata.username !== "guest"){
     res.json({
       "result": true,
@@ -148,7 +151,7 @@ usersRouter.get('/checkLogin', token.check, function(req, res, next) {
   }
 });
 
-usersRouter.post('/verifyToken', token.check, function(req, res, next) {
+usersRouter.post('/verifyToken', function(req, res, next) {
   if(typeof(req.userMetadata) !== "undefined"){
     res.json({userMetadata: req.userMetadata});
   }else{
@@ -157,19 +160,19 @@ usersRouter.post('/verifyToken', token.check, function(req, res, next) {
   }
 });
 
-usersRouter.get('/permissionsFor/:entityid', token.check, function(req, res, next) {
+usersRouter.get('/permissionsFor/:entityid', function(req, res, next) {
   Permissions.getUserPermissionsForId(req, req.params.entityid, function(err, post) {
     if (err) return next(err);
     res.json(post);
   }); 
 });
 
-usersRouter.get('/localGroups', token.check, function(req, res, next) {
+usersRouter.get('/localGroups', function(req, res, next) {
   res.send(req.userMetadata.groups.local);
 });
 
 /*urlencodedParser*/
-usersRouter.post('/admin/generateStandardPermissionsFor', token.check, Users.checkAdmin, function(req, res, next) {
+usersRouter.post('/admin/generateStandardPermissionsFor', Users.checkAdmin, function(req, res, next) {
   res.send("ADMIN!");
 /*  Permissions.createEntityPermissions(req, req.body.entityId, entityType, function(err, post) {
     console.log(req.body.entityId);
@@ -179,7 +182,7 @@ usersRouter.post('/admin/generateStandardPermissionsFor', token.check, Users.che
   });  */
 });
 
-usersRouter.post('/admin/setUserPermissions', token.check, Users.checkAdmin, urlencodedParser, function(req, res, next) {
+usersRouter.post('/admin/setUserPermissions', Users.checkAdmin, urlencodedParser, function(req, res, next) {
   Permissions.setUserPermissions(req.body.entityId, req.body.username, req.body.permissions, function (err, post) {
     if (err) return next(err);
     //if false there is no permission entry for this entity yet

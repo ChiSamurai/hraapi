@@ -16,7 +16,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 /* GET /manifest */
 /* get available manifests */
 
-adminRouter.get('/', Token.check, Users.checkAdmin, function(req, res, next) {
+adminRouter.get('/', Users.checkAdmin, function(req, res, next) {
 	var	renderObject;
 	renderObject = {
 		subtitle: "HRA IIIF API Frontend",
@@ -27,7 +27,7 @@ adminRouter.get('/', Token.check, Users.checkAdmin, function(req, res, next) {
 
 });
 
-adminRouter.get('/collectionsAndManifests', Token.check, Users.checkAdmin, function(req, res, next) {
+adminRouter.get('/collectionsAndManifests', Users.checkAdmin, function(req, res, next) {
 /*adminRouter.get('/collectionsAndManifests', Token.check, function(req, res, next) {*/
 	Manifests.getAllManifests(function (err, manifests) {
 		if(err) {
@@ -46,7 +46,7 @@ adminRouter.get('/collectionsAndManifests', Token.check, Users.checkAdmin, funct
 	});
 });
 
-adminRouter.get('/entityPermissions/:entityId/:format?', Token.check, Users.checkAdmin, function(req, res, next) {
+adminRouter.get('/entityPermissions/:entityId/:format?', Users.checkAdmin, function(req, res, next) {
 	//get the permissions for this entity
 	Permissions.getPermissionsEntry(req.params.entityId, function(err, permissionsJson) {
         if (err) return next(err);

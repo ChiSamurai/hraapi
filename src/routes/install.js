@@ -14,9 +14,9 @@ installRouter.post('/doInstall/:step', Users.adminExists, function (req, res, ne
 	/* Steps:
 		1: create adminGroup & User 
 	*/
-	console.log(req.params);
+/*	console.log(req.params);
 	console.log(req.body);
-	switch(parseInt(req.params.step)){
+*/	switch(parseInt(req.params.step)){
 		case 1:
 			//Create an admin user (if it does not already exist)
 			if(!req.adminExists){

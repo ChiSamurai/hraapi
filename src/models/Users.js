@@ -65,7 +65,7 @@ UserSchema.methods.comparePassword = function(candidatePassword, next) {
  *
  */
 UserSchema.statics.checkAdmin = function(req, res, next) {
-  if(req.userMetadata && req.userMetadata.admin) return next();
+  if(req.userMetadata.groups.indexOf('admins') !== -1) return next();
   res.status(403);
   res.send("admins only!");
 };
@@ -76,13 +76,12 @@ UserSchema.statics.checkAdmin = function(req, res, next) {
  
  * @memberOf module:UserSchema
  */
-
 UserSchema.statics.adminExists = function(req, res, next) {
-    Groups.getGroupMembers(['admins'], true, function (err, foundUsers) {
-        if(err) return next(err);
-        req.adminExists = (foundUsers['admins'] === undefined || foundUsers['admins'].length === 0)?false:true;
-        return next();
-    });
+  Groups.getGroupMembers(['admins'], true, function (err, foundUsers) {
+    if(err) return next(err);
+    req.adminExists = (foundUsers['admins'] === undefined || foundUsers['admins'].length === 0)?false:true;
+    return next();
+  });
 };
 
 
@@ -100,22 +99,32 @@ UserSchema.statics.getUsers = function(usernames, onlyActive, next) {
   if (onlyActive)
     query = {$and: [query, {"active": true}]}; 
   
-  mongoose.model("Users").find(query, {password: 0}, function (err, foundUsers){
+  mongoose.model('Users').find(query, {password: 0}, function (err, foundUsers){
     if(err) return next(err);
     next(null, foundUsers);
   });
 };
 
-
-/*UserSchema.statics.authLocal = function(username, password, next) {
-  mongoose.model("Users").findOne({ username: username }, function (err, user) {
-    if (err) return next(err);
-    if (!user) return next(null, false, {message: 'No username given'});
-    if (!password) return next(null, false, {message: 'Wrong username / password'});
-    return next(null, user);
-  })
+/**
+ * passport.js Function for authenticating a local user
+ * @memberof module:UserSchema
+ * @param  {string}  username the username which tries to authenticate
+ * @param  {string}  password the candid password in plaintext
+ */
+UserSchema.statics.authLocal = function(username, password, next) {
+  mongoose.model('Users').findOne({username:username, active:true}, function (err, user) {
+    if(err) return next(err);
+    // Compare the submitted password with the one stored
+    user.comparePassword(password, function(err, matches) {
+      if(matches){
+        return next(null, user);
+      }else{
+        return next(null, false, {message: 'Incorrect username.'});
+      }
+    })
+  });
 };
-*/
+
 /*
 
 UserSchema.statics.getUsersById = function(userIds, onlyActive, next) {

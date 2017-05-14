@@ -39,20 +39,17 @@ GroupSchema.methods.new = function(req, groupName, active = true, source = "loca
 GroupSchema.statics.getUserGroups = function(req, res, next) {
     var query = { 
         $and: [
-            {"members.id": req.userMetadata.username},
+            {"members.name": req.userMetadata.username},
             {"members.type": "user" }
         ]
     };
-    //ToDo: get LDAP Groups if connected to LDAP
-    var _next = next;
-    this.find(query ,{"_id": 0, "id": 1, "members.id.$": 1}, function(err, post) {
+    mongoose.model("Groups").find(query ,{_id: 0, groupname: 1}, function(err, post) {
         if (err) return next(err);
+        req.userMetadata['groups'] = [];
         post.forEach(function(group) {
-            req.userMetadata.groups.local.push({
-                id: group.id
-            });
+            req.userMetadata.groups.push(group.groupname);
         });
-        return next(null, req, res);
+        return next();
     });
 };
 

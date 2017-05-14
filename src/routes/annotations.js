@@ -17,7 +17,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 /* POST /annotations */
 /* creates a new annotation */
-router.post('/oaAnno', token.check, function(req, res, next) {
+router.post('/oaAnno', function(req, res, next) {
 /*  console.log(req.body);*/
   try{
     var canvasId = req.body.on.full;
@@ -53,7 +53,7 @@ router.post('/oaAnno', token.check, function(req, res, next) {
 
 /* GET /annotations/:id */
 // Get the annotation by id
-router.get('/oaAnno/:id', token.check, function(req, res, next) {
+router.get('/oaAnno/:id', function(req, res, next) {
   Permissions.getUserPermissionsForId(req, req.params.id, function(err, permissions){
     if (err) return next(err);
     if(typeof(permissions.read) !== "undefined" && permissions.read === true){
@@ -68,7 +68,7 @@ router.get('/oaAnno/:id', token.check, function(req, res, next) {
 
 /* PUT /annotations/:id */
 // Updates an annotation
-router.put('/oaAnno/:id', token.check, function(req, res, next) {
+router.put('/oaAnno/:id', function(req, res, next) {
   Permissions.getUserPermissionsForId(req, req.params.id, function(err, permissions) {
     if(typeof(permissions.modify) !== "undefined" && permissions.modify === true){
       var anno = {
@@ -86,7 +86,7 @@ router.put('/oaAnno/:id', token.check, function(req, res, next) {
 });
 
 /* DELETE /annotations/:id */
-router.delete('/oaAnno/:id', token.check, function(req, res, next) {
+router.delete('/oaAnno/:id', function(req, res, next) {
   Permissions.getUserPermissionsForId(req, req.params.id, function(err, permissions) {
     if(typeof(permissions.delete) !== "undefined" && permissions.delete === true){
       Annotations.findOneAndRemove({'oaAnnotation.@id': req.params.id}, function (err, post) {
@@ -102,7 +102,7 @@ router.delete('/oaAnno/:id', token.check, function(req, res, next) {
 });
 
 
-router.get('/searchCanvasAnnotations/:canvasid', token.check, function(req, res, next) {
+router.get('/searchCanvasAnnotations/:canvasid', function(req, res, next) {
   //Check if token was submitted and check returned an username
   Permissions.getUserPermissionsForId(req, req.params.canvasid, function(err, permissions) {
     if (err) return next(err);
@@ -123,7 +123,7 @@ router.get('/searchCanvasAnnotations/:canvasid', token.check, function(req, res,
 
 /* GET /annotations/canvasAnno:id */
 // Frontend: Display the annotation
-router.get('/displayAnno/:id/:format?', token.check, function(req, res, next) {
+router.get('/displayAnno/:id/:format?', function(req, res, next) {
   Permissions.getUserPermissionsForId(req, req.params.id, function(err, permissions){
     if (err) return next(err);
     if(typeof(permissions.read) !== "undefined" && permissions.read === true){

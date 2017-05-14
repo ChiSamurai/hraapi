@@ -4,7 +4,7 @@
 * @Author: Matthias Guth
 * @Date:   2017-04-22 16:00:59
 * @Last Modified by:   Matthias Guth
-* @Last Modified time: 2017-05-13 19:04:19
+* @Last Modified time: 2017-05-14 20:02:11
 */
 // load mongoose package
 var mongoose = require('mongoose');
@@ -37,7 +37,8 @@ var tests = require('./routes/tests');
 var doc = require('./routes/doc');
 
 var Users = require('./models/Users.js');
-
+var Groups = require('./models/Groups.js');
+var token = require('./token.js');
 
 // connect to MongoDB
 var connectString = 'mongodb://';
@@ -51,24 +52,12 @@ passport.use(new LocalStrategy({
     usernameField: 'username',
     passwordField: 'password'
   },
-  
-  /*Users.authLocal*/
-  function(username, password, next) {
-    Users.findOne({username:username, active:true}, function (err, user) {
-      if(err) return next(err);
-      // Compare the submitted password with the one stored
-      user.comparePassword(password, function(err, matches) {
-        if(matches){
-          return next(null, user);
-        }else{
-          return next(null, false, {message: 'Incorrect username.'});
-        }
-      })
-    });
-  })
-);
+  Users.authLocal
+));
 
 var app = express();
+
+console.log("running in '" + process.env.NODE_ENV + "' mode");
 
 app.set('superSecret', config.secret); // secret variable
 // view engine setup
@@ -99,7 +88,16 @@ app.use(function(req, res, next) {
   next();
 });
 
+//Always try to look for existing admin, a submitted token, the usergroups
+//afterwards there is a req.userMetadata object available to all the routes
+app.use(Users.adminExists, token.check, Groups.getUserGroups, function(req, res, next) {
 
+  if (!req.adminExists){
+    //no Admin users found, so show install options
+    return res.render('pages/install/index', renderObject);
+  }
+  next();
+});
 
 app.use('/install', install);
 app.use('/admin', admin);
@@ -129,7 +127,4 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-console.log("running in '" + process.env.NODE_ENV + "' mode");
-
 module.exports = app;
