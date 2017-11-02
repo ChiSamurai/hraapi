@@ -34,13 +34,12 @@ adminRouter.get('/collectionsAndManifests', Users.checkAdmin, function(req, res,
 			manifests = [];
 		}
 		// body...
-		renderObject = {
+		var renderObject = {
 			subtitle: "collectons and manifests overview",
 			manifests: manifests,
 			manifestStatics: Manifests.iiifSchemaVars,
-			admin: req.userMetadata.admin
+			userMetadata: req.userMetadata
 		};
-		/*console.log(manifests)*/
 		res.render('pages/admin/collectionsAndManifests', renderObject);
 
 	});

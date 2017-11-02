@@ -65,6 +65,7 @@ UserSchema.methods.comparePassword = function(candidatePassword, next) {
  *
  */
 UserSchema.statics.checkAdmin = function(req, res, next) {
+  console.log(req.userMetadata.groups.indexOf('admins'));
   if(req.userMetadata.groups.indexOf('admins') !== -1) return next();
   res.status(403);
   res.send("admins only!");
@@ -115,11 +116,13 @@ UserSchema.statics.authLocal = function(username, password, next) {
   mongoose.model('Users').findOne({username:username, active:true}, function (err, user) {
     if(err) return next(err);
     // Compare the submitted password with the one stored
+    if(!user) return next(null, false, {message: 'Incorrect username or password.'});
     user.comparePassword(password, function(err, matches) {
+      if (err) return next(err);
       if(matches){
         return next(null, user);
       }else{
-        return next(null, false, {message: 'Incorrect username.'});
+        return next(null, false, {message: 'Incorrect username or password.'});
       }
     })
   });
